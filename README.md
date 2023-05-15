@@ -5,7 +5,7 @@ source code API dành cho website yoga
 Cài đặt
 1. Clone repo này bằng cách sử dụng lệnh sau:
 ```bash
-https://github.com/dunghq21102001/SDN_YOGA_API/new/yoga-dev
+[https://github.com/dunghq21102001/SDN_YOGA_API/new/yoga-dev](https://github.com/dunghq21102001/SDN_YOGA_API.git)
 ````
 2. Cài đặt các dependencies bằng lệnh sau:
 ```
