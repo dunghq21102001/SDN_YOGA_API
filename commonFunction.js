@@ -1,4 +1,4 @@
-export class commonFunction {
+class commonFunction {
     static responseSuccess(model, type, lang) {
         if (lang == 'vi') return { message: `${type} ${model} thành công` }
         else return { message: `${type} ${model} successful` }
@@ -14,3 +14,5 @@ export class commonFunction {
         else return { message: 'Something went wrong! Please try again' }
     }
 }
+
+module.exports = commonFunction

@@ -5,6 +5,7 @@ const productSchema = new Schema({
     price: { type: Number, require },
     description: { type: String, require },
     images: { type: Array, require },
+    categoryId : { type: Schema.Types.ObjectId, ref: 'productcategories' },
 }, {
     timestamps: true,
 })

@@ -5,6 +5,7 @@ const userModel = require('../models/User')
 const userRouter = express.Router()
 const crypto = require('crypto');
 const { commonFunction } = require('../commonFunction');
+const { ObjectId } = require('mongodb');
 
 userRouter.use(cors())
 
@@ -77,6 +78,47 @@ userRouter.post('/change-password/:id', cors(), async (req, res) => {
         }
     } catch (error) {
         res.status(400).json({ error })
+    }
+})
+
+userRouter.get('/users', cors(), async (req, res) => {
+    const listUser = await userModel.find({})
+    res.send(listUser)
+})
+
+userRouter.get('/user/:id', cors(), async (req, res) => {
+    const id = new ObjectId(req.params['id'])
+    res.send(await userModel.findOne({ _id: id }))
+})
+
+userRouter.put('/user/:id', cors(), async (req, res) => {
+    const id = new ObjectId(req.params['id'])
+    const filter = { _id: id }
+
+    userModel.updateOne(filter, {
+        fullName: req.body.fullName,
+        email: req.body.email,
+        userName: req.body.userName,
+        password: req.body.password,
+        salt: req.body.salt,
+        address: req.body.address,
+        phone: req.body.phone,
+        role: req.body.role,
+        image: req.body.image,
+        registeredCourses: req.body.registeredCourses,
+        classesTaught: req.body.classesTaught
+    })
+
+    res.send(commonFunction.responseSuccess('người dùng', 'Chỉnh sửa', 'vi'))
+})
+
+userRouter.delete('/user/:id', cors(), async (req, res) => {
+    const id = new ObjectId(req.params['id'])
+    const result = await userModel.deleteOne({ _id: id })
+    if (result.deletedCount === 1) {
+        res.send(commonFunction.responseSuccess('người dùng', 'Xoá', 'vi'))
+    } else {
+        res.send(commonFunction.unknownError('vi'))
     }
 })
 
