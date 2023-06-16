@@ -8,7 +8,7 @@ productRouter.use(cors())
 
 productRouter.get('/', cors(), async (req, res, next) => {
     try {
-        const listProduct = await productsModel.find({})
+        const listProduct = await productsModel.find({}).populate('productcategories')
         res.send(listProduct)
     } catch (error) {
         res.status(400).json({ message: error })

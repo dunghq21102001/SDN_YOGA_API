@@ -8,8 +8,8 @@ productCategoryRouter.use(cors())
 
 productCategoryRouter.get('/', cors(), async (req, res, next) => {
     try {
-        // const listProduct = await productCategoryModel.findById('64881835e2b37e496e2affd1').populate('products', 'name price')
-        // res.send(listProduct)
+        const listProduct = await productCategoryModel.find({}).populate('products')
+        res.send(listProduct)
 
         
     } catch (error) {

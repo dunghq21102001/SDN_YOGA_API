@@ -26,6 +26,7 @@ const classRoute = require('./router/Class')
 const productRoute = require('./router/Product')
 const productCategoryRouter = require('./router/ProductCategory')
 const classCategoryRouter = require('./router/classCategory')
+const cartRouter = require('./router/cart')
 
 app.use(`${PREFIX_API_URL}/users/`, usersRoute)
 app.use(`${PREFIX_API_URL}/contacts/`, contactRoute)
@@ -33,6 +34,7 @@ app.use(`${PREFIX_API_URL}/classes/`, classRoute)
 app.use(`${PREFIX_API_URL}/products/`, productRoute)
 app.use(`${PREFIX_API_URL}/productCategories/`, productCategoryRouter)
 app.use(`${PREFIX_API_URL}/classCategories/`, classCategoryRouter)
+app.use(`${PREFIX_API_URL}/cart/`, cartRouter)
 
 app.get('/', (req, res) => {
   res.send('server working 🔥🔥🔥')

@@ -10,9 +10,10 @@ const userSchema = new Schema({
     phone: { type: String, require },
     role: { type: String, require },
     image: { type: String, require },
-    registeredCourses: { type: Array, require },
-    classesTaught: { type: Array, require },
+    registeredCourses: [{ type: Schema.Types.ObjectId, ref: 'classes' }],
+    classesTaught: [{ type: Schema.Types.ObjectId, ref: 'classes' }],
     createdDate: { type: String, require },
+    cart: { type: Schema.Types.ObjectId, ref: 'carts' }
 }, {
     timestamps: true,
 })

@@ -8,7 +8,7 @@ classCategoryRouter.use(cors())
 
 classCategoryRouter.get('/', cors(), async (req, res, next) => {
     try {
-        const listCLass = await classCategoryModel.find({})
+        const listCLass = await classCategoryModel.find({}).populate('classes')
         res.send(listCLass)
     } catch (error) {
         res.status(400).json({ message: error })

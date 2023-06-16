@@ -88,7 +88,7 @@ userRouter.get('/users', cors(), async (req, res) => {
 
 userRouter.get('/user/:id', cors(), async (req, res) => {
     const id = new ObjectId(req.params['id'])
-    res.send(await userModel.findOne({ _id: id }))
+    res.send(await userModel.findOne({ _id: id }).populate('registeredCourses').populate('classesTaught'))
 })
 
 userRouter.put('/user/:id', cors(), async (req, res) => {
