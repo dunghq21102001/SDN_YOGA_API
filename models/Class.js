@@ -9,7 +9,7 @@ const classSchema = new Schema({
     createdDate: { type: String, require },
     startedDate: { type: String, require },
     endDate: { type: String, require },
-    classcategories: { type: Schema.Types.ObjectId, ref: 'classcategories' },
+    classcategories: { type: Schema.Types.ObjectId, ref: 'classcategories'},
     userIds: [{ type: Schema.Types.ObjectId, ref: 'users' }],
     ptIds: [{ type: Schema.Types.ObjectId, ref: 'users' }]
 }, {

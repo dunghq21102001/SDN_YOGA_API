@@ -112,6 +112,23 @@ userRouter.put('/user/:id', cors(), async (req, res) => {
     res.send(commonFunction.responseSuccess('người dùng', 'Chỉnh sửa', 'vi'))
 })
 
+userRouter.put('/updatePT/:ptIds',(req, res, next) => {
+    var id = req.params.ptIds
+    var newclassesTaught= req.body.classesTaught
+    let arr = []
+    arr.push(newclassesTaught)
+    userModel.findByIdAndUpdate(id, {
+        classesTaught:arr
+    })
+        .then(data => {
+            res.json("Update successfully")
+        })
+        .catch(err => {
+            res.status(500).json("Cannot update!!!")
+        })
+})
+
+
 userRouter.delete('/user/:id', cors(), async (req, res) => {
     const id = new ObjectId(req.params['id'])
     const result = await userModel.deleteOne({ _id: id })
