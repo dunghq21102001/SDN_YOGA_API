@@ -12,7 +12,7 @@ classRouter.get('/', cors(), async (req, res, next) => {
         res.status(400).json({ message: error })
     }
 })
-
+// PT register Class
 classRouter.put('/:id', (req, res, next) => {
     var id = req.params.id;
     var newptId = req.body.ptIds;
@@ -37,7 +37,7 @@ classRouter.put('/:id', (req, res, next) => {
             res.status(404).json("Class not found!!!");
         });
 });
-
+// User register Class
 classRouter.put('/choosen/:id',(req, res, next) => {
     var id = req.params.id
     var newuserIds= req.body.userIds
