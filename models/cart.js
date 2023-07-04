@@ -3,7 +3,7 @@ const { Schema } = mongoose
 
 const item = new Schema({
     productId: { type: Schema.Types.ObjectId, ref: 'products' },
-    quantity: { type: Number, require },
+    quantity: { type: Number },
 })
 
 const cartSchema = new Schema({

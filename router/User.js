@@ -1,12 +1,11 @@
 const express = require('express')
-const cors = require("cors");
+const cors = require("cors")
 
 const userModel = require('../models/User')
 const userRouter = express.Router()
-const crypto = require('crypto');
-const { commonFunction } = require('../commonFunction');
-const { ObjectId } = require('mongodb');
-
+const crypto = require('crypto')
+const { commonFunction } = require('../commonFunction')
+const { ObjectId } = require('mongodb')
 userRouter.use(cors())
 
 userRouter.get('/', cors(), (req, res, next) => {
@@ -15,17 +14,22 @@ userRouter.get('/', cors(), (req, res, next) => {
 })
 
 userRouter.post('/register', cors(), async (req, res) => {
-    try {
-        const salt = crypto.randomBytes(16).toString('hex')
-        let user = req.body
-        const hash = crypto.pbkdf2Sync(user.password, salt, 1000, 64, `sha512`).toString(`hex`)
-        user.password = hash
-        user.salt = salt
-        await userModel.create(user)
-        res.send(commonFunction.responseSuccess('người dùng', 'Đăng ký', 'vi'))
-    } catch (error) {
-        res.status(400).json({ error })
+
+    // Kiểm tra xem người dùng đã tồn tại hay chưa
+    const existingUser = await userModel.findOne({ userName: req.body.userName })
+
+    if (existingUser) {
+        return res.json({ error: 'User already exists' })
     }
+
+    var crypto = require('crypto')
+    salt = crypto.randomBytes(16).toString('hex')
+    user = req.body
+    hash = crypto.pbkdf2Sync(user.password, salt, 1000, 64, `sha512`).toString(`hex`)
+    user.password = hash
+    user.salt = salt
+    await userModel.create(user)
+    res.send(req.body)
 })
 
 userRouter.post('/login', cors(), async (req, res) => {
@@ -92,33 +96,37 @@ userRouter.get('/user/:id', cors(), async (req, res) => {
 })
 
 userRouter.put('/user/:id', cors(), async (req, res) => {
-    const id = new ObjectId(req.params['id'])
-    const filter = { _id: id }
+    const userId = req.params.id
+    const updatedUserData = req.body
 
-    userModel.updateOne(filter, {
-        fullName: req.body.fullName,
-        email: req.body.email,
-        userName: req.body.userName,
-        password: req.body.password,
-        salt: req.body.salt,
-        address: req.body.address,
-        phone: req.body.phone,
-        role: req.body.role,
-        image: req.body.image,
-        registeredCourses: req.body.registeredCourses,
-        classesTaught: req.body.classesTaught
-    })
+    try {
+        const user = await userModel.findById(userId)
+        if (!user) {
+            return res.status(404).json({ message: 'Người dùng không tồn tại' })
+        }
 
-    res.send(commonFunction.responseSuccess('người dùng', 'Chỉnh sửa', 'vi'))
+        user.fullName = updatedUserData.fullName
+        user.email = updatedUserData.email
+        user.userName = updatedUserData.userName
+        user.role = updatedUserData.role
+        user.phone = updatedUserData.phone
+        user.address = updatedUserData.address
+
+        await user.save()
+
+        res.json({ message: 'Thông tin người dùng đã được cập nhật' })
+    } catch (error) {
+        res.status(500).json({ message: 'Đã xảy ra lỗi' })
+    }
 })
 
-userRouter.put('/updatePT/:ptIds',(req, res, next) => {
+userRouter.put('/updatePT/:ptIds', (req, res, next) => {
     var id = req.params.ptIds
-    var newclassesTaught= req.body.classesTaught
+    var newclassesTaught = req.body.classesTaught
     let arr = []
     arr.push(newclassesTaught)
     userModel.findByIdAndUpdate(id, {
-        classesTaught:arr
+        classesTaught: arr
     })
         .then(data => {
             res.json("Update successfully")
@@ -128,14 +136,67 @@ userRouter.put('/updatePT/:ptIds',(req, res, next) => {
         })
 })
 
+userRouter.put('/:id/image', async (req, res) => {
+    try {
+        const userId = req.params.id
+        const { image } = req.body
+
+        // Kiểm tra xem người dùng có tồn tại không
+        const user = await userModel.findById(userId)
+        if (!user) {
+            return res.status(404).json({ message: 'Người dùng không tồn tại' })
+        }
+
+        user.image = image
+        await user.save()
+
+        res.json({ user })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật hình ảnh' })
+    }
+})
+
 
 userRouter.delete('/user/:id', cors(), async (req, res) => {
     const id = new ObjectId(req.params['id'])
     const result = await userModel.deleteOne({ _id: id })
     if (result.deletedCount === 1) {
-        res.send(commonFunction.responseSuccess('người dùng', 'Xoá', 'vi'))
+        res.send('ok')
     } else {
-        res.send(commonFunction.unknownError('vi'))
+        // res.send(commonFunction.unknownError('vi'))
+        res.status(500).json("Something went wrong!!!")
+    }
+})
+
+userRouter.get('/search', cors(), async (req, res) => {
+    const fullName = req.query.fullName
+
+    try {
+        const users = await userModel.find({ fullName: { $regex: fullName, $options: 'i' } })
+        res.json(users)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+
+userRouter.get('/ascending', async (req, res) => {
+    try {
+        const users = await userModel.find().sort({ fullName: 'asc' })
+        res.json(users)
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+})
+
+userRouter.get('/descending', async (req, res) => {
+    try {
+        const users = await userModel.find().sort({ fullName: 'desc' })
+        res.json(users)
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({ message: 'Internal server error' })
     }
 })
 
