@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require("cors");
 const classModel = require('../models/Class');
-const userModel = require('../models/User');
 const classRouter = express.Router()
 classRouter.use(cors())
 
@@ -17,6 +16,8 @@ classRouter.get('/', cors(), async (req, res, next) => {
 classRouter.put('/:id',(req, res, next) => {
     var id = req.params.id
     var newptId= req.body.ptIds
+
+    
     console.log(newptId);
     let arr = []
     arr.push(newptId)
