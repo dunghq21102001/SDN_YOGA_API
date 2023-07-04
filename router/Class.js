@@ -13,24 +13,31 @@ classRouter.get('/', cors(), async (req, res, next) => {
     }
 })
 
-classRouter.put('/:id',(req, res, next) => {
-    var id = req.params.id
-    var newptId= req.body.ptIds
-
-    
+classRouter.put('/:id', (req, res, next) => {
+    var id = req.params.id;
+    var newptId = req.body.ptIds;
     console.log(newptId);
-    let arr = []
-    arr.push(newptId)
-    classModel.findByIdAndUpdate(id, {
-        ptIds:arr
-    })
+    classModel.findById(id)
         .then(data => {
-            res.json("Update successfully")
+            let arr = data.ptIds || []; 
+            if (!arr.includes(newptId)) { 
+                arr.push(newptId);
+            }
+            else{
+                res.json("PT already register this class!!")
+            }
+            classModel.findByIdAndUpdate(id, { ptIds: arr })
+                .then(updatedData => {
+                    res.json("Update successfully");
+                })
+                .catch(err => {
+                    res.status(500).json("Cannot update!!!");
+                });
         })
         .catch(err => {
-            res.status(500).json("Cannot update!!!")
-        })
-})
+            res.status(404).json("Class not found!!!");
+        });
+});
 
 classRouter.put('/choosen/:id',(req, res, next) => {
     var id = req.params.id
