@@ -2,6 +2,8 @@ const express = require('express')
 const cors = require("cors")
 const classModel = require('../models/Class')
 const userModel = require('../models/User')
+const requestsModel = require('../models/Request');
+
 const userRouter = express.Router()
 const crypto = require('crypto')
 const { commonFunction } = require('../commonFunction')
@@ -160,6 +162,8 @@ userRouter.put('/:id/image', async (req, res) => {
 
 userRouter.delete('/user/:id', cors(), async (req, res) => {
     const id = new ObjectId(req.params['id'])
+
+    await requestsModel.deleteMany({ user: id })
     await classModel.updateMany(
         { userIds: id },
         { $pull: { userIds: id } }
